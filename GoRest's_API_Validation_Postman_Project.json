@@ -1,0 +1,1363 @@
+{
+  "info": {
+    "_postman_id": "dd87f4b6-443f-400f-b0c5-a7b0b49c5f4b",
+    "name": "GoRest's API Validation Project",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "42112144"
+  },
+  "item": [
+    {
+      "name": "GoRest CRUD Tests with Dynamic data",
+      "item": [
+        {
+          "name": "Adding new user",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var ran=Math.random().toString(36).substring(2);\r",
+                  "var name=\"Manish\"+ran;\r",
+                  "var email = \"manish\" + ran + \"@gmail.com\";\r",
+                  "console.log(ran);\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"gorestUrl\", \"https://gorest.co.in/public/v2/users\");\r",
+                  "pm.environment.set(\"name_vr\", name);\r",
+                  "pm.environment.set(\"email_vr\", email);\r",
+                  "pm.environment.set(\"authToken\", \"0078e7baba468a32cbd4ef5dfa6103fb5ec5cc5bde2a6434190d0c153da4a472\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"New user created successfully\",()=>{\r",
+                  "    pm.expect(pm.response.code).to.eql(201);\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "var jdata=pm.response.json();\r",
+                  "console.log(jdata);\r",
+                  "\r",
+                  "pm.environment.set(\"user_id\", jdata.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "    {\r\n        \r\n        \"name\":\"{{name_vr}}\",\r\n        \"email\":\"{{email_vr}}\", \r\n         \"gender\": \"male\",\r\n        \"status\": \"inactive\"\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{gorestUrl}}",
+              "host": [
+                "{{gorestUrl}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Getting that new user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var responseBody = pm.response.json();\r",
+                  "pm.test(\"Status code is 200\", ()=>{\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"user name validation\",()=>{\r",
+                  "    pm.expect(responseBody.name).to.eql(pm.environment.get(\"name_vr\"));\r",
+                  "    })\r",
+                  "\r",
+                  "pm.test(\"user email validation\",()=>{\r",
+                  "    pm.expect(responseBody.email).to.eql(pm.environment.get(\"email_vr\"));\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"user id validation\",()=>{\r",
+                  "    pm.expect(responseBody.id).to.eql(pm.environment.get(\"user_id\"));\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gorestUrl}}/{{user_id}}",
+              "host": [
+                "{{gorestUrl}}"
+              ],
+              "path": [
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update that new user",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var ran=Math.random().toString(36).substring(2);\r",
+                  "var name=\"Manish\"+ran;\r",
+                  "var email = \"manish\" + ran + \"@gmail.com\";\r",
+                  "console.log(ran);\r",
+                  "\r",
+                  "pm.environment.set(\"name_vr\", name);\r",
+                  "pm.environment.set(\"email_vr\", email);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var respo=pm.response.json();\r",
+                  "pm.test(\"change in status 'active'\",()=>{\r",
+                  "    pm.expect(respo.status).to.eql(\"active\");\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "    {\r\n        \r\n        \"name\":\"{{name_vr}}\",\r\n        \"email\":\"{{email_vr}}\",\r\n        \"gender\": \"male\",\r\n        \"status\": \"active\"\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{gorestUrl}}/{{user_id}}",
+              "host": [
+                "{{gorestUrl}}"
+              ],
+              "path": [
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deleting that new user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\",()=>{\r",
+                  "    pm.response.to.have.status(204) \r",
+                  "});\r",
+                  "\r",
+                  "pm.environment.unset(\"user_id\");  \r",
+                  "pm.environment.unset(\"name_vr\");\r",
+                  "pm.environment.unset(\"email_vr\");\r",
+                  "pm.collectionVariables.unset(\"gorestUrl\");\r",
+                  "\r",
+                  "pm.test(\"Response body is empty\", () => {\r",
+                  "    pm.expect(pm.response.text()).to.eql(''); \r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{gorestUrl}}/{{user_id}}",
+              "host": [
+                "{{gorestUrl}}"
+              ],
+              "path": [
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "0078e7baba468a32cbd4ef5dfa6103fb5ec5cc5bde2a6434190d0c153da4a472",
+            "type": "string"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GoRest CRUD Tests with .csv File",
+      "item": [
+        {
+          "name": "Create user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\",()=> {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "    });\r",
+                  "\r",
+                  "    var responseBody=pm.response.json();\r",
+                  "    pm.collectionVariables.set(\"new_id\",responseBody.id); \r",
+                  "    \r",
+                  "    console.log(pm.collectionVariables.get(\"new_id\"));\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "//Note: this API required new email so always update .csv file\r",
+                  "console.log(\"gorest API required new email so always update .csv file\");\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"baseUrl\", \"https://gorest.co.in/public/v2/users\");\r",
+                  "pm.environment.set(\"authToken\", \"0078e7baba468a32cbd4ef5dfa6103fb5ec5cc5bde2a6434190d0c153da4a472\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\r\n \"name\": \"{{user_name}}\",\r\n  \"email\": \"{{user_email}}\",\r\n  \"gender\": \"male\",\r\n  \"status\": \"inactive\"\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": [
+                "{{baseUrl}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get user by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Check if the response status code is 200\", function () {\r",
+                  "pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "var responseJson = pm.response.json();\r",
+                  "console.log(pm.iterationData.get(\"user_name\"));\r",
+                  "console.log(pm.iterationData.get(\"user_email\"));\r",
+                  "pm.test(\"Check if the response contains the correct data\", function () {\r",
+                  "    pm.expect(responseJson.name).to.eql(pm.iterationData.get(\"user_name\"));\r",
+                  "    pm.expect(responseJson.email).to.eql(pm.iterationData.get(\"user_email\"));\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{new_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{new_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update user",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var ran=Math.random().toString(36).substring(2);\r",
+                  "var name=\"Manish\"+ran;\r",
+                  "var email = \"manish\" + ran + \"@gmail.com\";\r",
+                  "console.log(ran);\r",
+                  "\r",
+                  "pm.environment.set(\"name_vr\", name);\r",
+                  "pm.environment.set(\"email_vr\", email);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var respo=pm.response.json();\r",
+                  "pm.test(\"change in status active\",()=>{\r",
+                  "    pm.expect(respo.status).to.eql(\"active\");\r",
+                  "})\r",
+                  "\r",
+                  "pm.environment.unset(\"name_vr\");\r",
+                  "pm.environment.unset(\"email_vr\");\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "    {\r\n        \r\n        \"name\":\"{{name_vr}}\",\r\n        \"email\":\"{{email_vr}}\",\r\n        \"gender\": \"male\",\r\n        \"status\": \"active\"\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{new_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{new_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\",()=>{\r",
+                  "    pm.response.to.have.status(204) // 204 means no content\r",
+                  "});\r",
+                  "\r",
+                  "pm.environment.unset(\"new_id\"); // unset the environment variable after the test\r",
+                  "pm.environment.unset(\"user_name\");\r",
+                  "pm.environment.unset(\"user_email\");\r",
+                  "\r",
+                  "pm.test(\"Response body is empty\", () => {\r",
+                  "    pm.expect(pm.response.text()).to.eql(''); \r",
+                  "});\r",
+                  "\r",
+                  "console.log(pm.collectionVariables.get(\"new_id\"));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{new_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{new_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Negative cases validation",
+      "item": [
+        {
+          "name": "Create user without email",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"testUrl\", \"https://gorest.co.in/public/v2/users\");\r",
+                  "var ran=Math.random().toString(36).substring(2);\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"name\", ran);\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Should fail when email is missing\", function () {\r",
+                  "    pm.response.to.have.status(422);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Error message should indicates 'can't be blank'\",()=>{\r",
+                  "    pm.expect(pm.response.json()[0].message).to.eql(\"can't be blank\");\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "  {\r\n        \r\n        \"name\":\"{{name}}\",\r\n         \"gender\": \"male\",\r\n        \"status\": \"inactive\"\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{testUrl}}",
+              "host": [
+                "{{testUrl}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create user with Duplicate Email",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Should fail when email is Duplicate\", function () {\r",
+                  "    pm.response.to.have.status(422);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Error message should indicates 'email has already been taken'\",()=>{\r",
+                  "    pm.expect(pm.response.json()[0].message).to.eql(\"has already been taken\");\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "  {\r\n        \r\n        \"name\":\"{{name}}\",\r\n         \"gender\": \"male\",\r\n         \"email\": \"1man4@gmail.com\",\r\n        \"status\": \"inactive\"\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{testUrl}}",
+              "host": [
+                "{{testUrl}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create user with invalid format of email",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Should fail when email is Invalid\", function () {\r",
+                  "    pm.response.to.have.status(422);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Error message should indicates 'email is invalid'\",()=>{\r",
+                  "    pm.expect(pm.response.json()[0].message).to.eql(\"is invalid\")\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "  {\r\n        \r\n        \"name\":\"{{name}}\",\r\n         \"gender\": \"male\",\r\n         \"email\": \"{{name}}\",\r\n        \"status\": \"inactive\"\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{testUrl}}",
+              "host": [
+                "{{testUrl}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create user with invalid token",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var email_var=pm.collectionVariables.get(\"name\")+\"@gmail.com\";\r",
+                  "var email=pm.collectionVariables.set(\"email\",email_var);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Should fail when Token is Invalid\", function () {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Error message should indicates 'Invalid token'\",()=>{\r",
+                  "    pm.expect(pm.response.json().message).to.eql(\"Invalid token\")\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "xxxxxx",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "  {\r\n        \r\n        \"name\":\"{{name}}\",\r\n         \"gender\": \"male\",\r\n         \"email\": \"{{email}}\",\r\n        \"status\": \"inactive\"\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{testUrl}}",
+              "host": [
+                "{{testUrl}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create user with Wrong Data Type",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var email_var=pm.collectionVariables.get(\"name\")+\"@gmail.com\";\r",
+                  "var email=pm.collectionVariables.set(\"email\",email_var);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Should fail when Wrong Data Type pass\", function () {\r",
+                  "    pm.response.to.have.status(422);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Error message should indicates 'can't be blank, can be male of female'\",()=>{\r",
+                  "    pm.expect((pm.response.json())[0].message).to.eql(\"can't be blank, can be male of female\")\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "  {\r\n        \r\n        \"name\":\"{{name}}\",\r\n         \"gender\": \"nil\",\r\n         \"email\": \"{{email}}\",\r\n        \"status\": \"inactive\"\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{testUrl}}",
+              "host": [
+                "{{testUrl}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get user with invalid id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"should fail when id is invalid\", ()=>{\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "pm.test(\"Error message indicate 'Resource not found\", ()=>{\r",
+                  "    pm.expect(pm.response.json().message).to.eql(\"Resource not found\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{testUrl}}/1",
+              "host": [
+                "{{testUrl}}"
+              ],
+              "path": [
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Response Code Validation",
+      "item": [
+        {
+          "name": "Positive status validation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status test 1-single code\",()=>{\r",
+                  "pm.response.to.have.status(200);\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"Status test 2-array of codes\",()=>{\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200,201]);\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"Status test 3-with eql() method\",()=>{\r",
+                  "pm.expect(pm.response.code). to.be.eql(200);\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"status test 4-status text validation\",()=>{\r",
+                  "    pm.expect(pm.response.status).to.be.eql(\"OK\");\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"Status test 5- code under range\",()=>{\r",
+                  "    pm.expect(pm.response.code).to.be.within(200,299);\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/users/1",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Negative status validation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status code validation\",()=>{\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/userz",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "userz"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Response body validation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status code \",()=>{\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "let req=JSON.parse(pm.request.body.raw);\r",
+                  "let res=pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"response body field-value validation\",()=>{\r",
+                  "    pm.expect(res.title).to.eql(req.title);\r",
+                  "    pm.expect(res.body).to.eql(req.body);\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"Response body datatype validation\",()=>{\r",
+                  "    pm.expect(res).to.be.an('object');\r",
+                  "    pm.expect(res.title).to.be.a(\"String\");\r",
+                  "    pm.expect(res.title).to.be.eql(\"foo\");\r",
+                  "    pm.expect(res.userId).to.be.a('number');\r",
+                  "    pm.expect(res.userId).to.be.eql(1);\r",
+                  "    \r",
+                  "})\r",
+                  "\r",
+                  "var schema={\r",
+                  "  \r",
+                  "  \"type\": \"object\",\r",
+                  "  \"properties\": {\r",
+                  "    \"title\": {\r",
+                  "      \"type\": \"string\"\r",
+                  "    },\r",
+                  "    \"body\": {\r",
+                  "      \"type\": \"string\"\r",
+                  "    },\r",
+                  "    \"userId\": {\r",
+                  "      \"type\": \"integer\"\r",
+                  "    },\r",
+                  "    \"id\": {\r",
+                  "      \"type\": \"integer\"\r",
+                  "    }\r",
+                  "  },\r",
+                  "  \"required\": [\r",
+                  "    \"title\",\r",
+                  "    \"body\",\r",
+                  "    \"userId\",\r",
+                  "    \"id\"\r",
+                  "  ]\r",
+                  "};\r",
+                  "\r",
+                  "pm.test(\"response schema validation\", ()=> {\r",
+                  "    pm.response.to.have.jsonSchema(schema);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"foo\",\r\n  \"body\": \"bar\",\r\n  \"userId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Response Time Validation",
+      "item": [
+        {
+          "name": "Under 300ms",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Response time is less than 300ms\", function () {\r",
+                  "    console.log(pm.response.responseTime);\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(300);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/users",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Under 500ms",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status code 500ms\",()=>{\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+                  "    console.log(pm.response.responseTime);\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/1",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Header Tests",
+      "item": [
+        {
+          "name": "Headers validations",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"if Header is exist\",()=>{\r",
+                  "pm.response.to.have.header(\"Content-Type\"); \r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"value of Header-content-Type\", () => {\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json; charset=utf-8\");\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"Check header value (case-insensitive)\",()=>{\r",
+                  "    pm.expect(pm.response.headers.get(\"SeRvEr\").toLowerCase()).to.eql(\"cloudflare\");\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"Check header value partially\",()=>{\r",
+                  "    pm.expect(pm.response.headers.get(\"Server\").toLowerCase()).to.include(\"cloud\");\r",
+                  "})\r",
+                  "\r",
+                  "\r",
+                  "pm.test(\"Check multiple headers at once\",()=>{\r",
+                  "    const requiredHeaders = [\"Content-Type\", \"Server\",\"Content-Length\",\"Date\"];\r",
+                  "    requiredHeaders.forEach(head => {\r",
+                  "    pm.response.to.have.header(head);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/users",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "cookiesTest",
+      "item": [
+        {
+          "name": "Validation for cookies",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Cookie present\",()=>{\r",
+                  "    pm.expect(pm.cookies.has(\"AEC\")).to.be.true;\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"cookie value present\",()=>{\r",
+                  "    pm.expect(pm.cookies.get(\"AEC\")).to.not.be.null;\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "let cookies = pm.response.headers.filter(h => h.key === \"Set-Cookie\");\r",
+                  "\r",
+                  "pm.test(\"Cookies should be secure\", () => {\r",
+                  "    cookies.forEach(c => {\r",
+                  "        pm.expect(c.value).to.include(\"Secure\");\r",
+                  "      \r",
+                  "    });\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://www.google.com/",
+              "protocol": "https",
+              "host": [
+                "www",
+                "google",
+                "com"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "0078e7baba468a32cbd4ef5dfa6103fb5ec5cc5bde2a6434190d0c153da4a472",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": ""
+    },
+    {
+      "key": "name",
+      "value": ""
+    },
+    {
+      "key": "testUrl",
+      "value": ""
+    },
+    {
+      "key": "email",
+      "value": ""
+    },
+    {
+      "key": "new_id",
+      "value": ""
+    }
+  ]
+}
